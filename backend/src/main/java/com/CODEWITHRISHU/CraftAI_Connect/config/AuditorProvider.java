@@ -1,7 +1,7 @@
 package com.CODEWITHRISHU.CraftAI_Connect.config;
 
-import com.CODEWITHRISHU.CraftAI_Connect.entity.User;
-import com.CODEWITHRISHU.CraftAI_Connect.repository.UserRepository;
+import com.CODEWITHRISHU.CraftAI_Connect.entity.Artisian;
+import com.CODEWITHRISHU.CraftAI_Connect.repository.ArtisianRepository;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,16 +11,16 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-public class AuditorProvider implements AuditorAware<User> {
+public class AuditorProvider implements AuditorAware<Artisian> {
 
-    private final UserRepository userRepository;
+    private final ArtisianRepository artisianRepository;
 
-    public AuditorProvider(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public AuditorProvider(ArtisianRepository artisianRepository) {
+        this.artisianRepository = artisianRepository;
     }
 
     @Override
-    public Optional<User> getCurrentAuditor() {
+    public Optional<Artisian> getCurrentAuditor() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
@@ -36,6 +36,6 @@ public class AuditorProvider implements AuditorAware<User> {
             username = principal.toString();
         }
 
-        return userRepository.findByEmail(username);
+        return artisianRepository.findByEmail(username);
     }
 }

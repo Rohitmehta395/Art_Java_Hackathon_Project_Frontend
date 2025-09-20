@@ -59,5 +59,5 @@ public class Product extends AuditEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artisan_id", nullable = false)
-    private Artisian artisan;
+    private Artisian artisian;
 }

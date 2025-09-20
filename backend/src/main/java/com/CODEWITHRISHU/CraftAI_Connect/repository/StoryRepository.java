@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface StoryRepository extends JpaRepository<Story, Long> {
-    List<Story> findByArtisanIdOrderByCreatedAtDesc(Long artisanId);
-
     List<Story> findByProductIdOrderByCreatedAtDesc(Long productId);
 
-    List<Story> findByTypeAndArtisanId(StoryType type, Long artisanId);
+    List<Story> findByStoryTypeAndArtisianId(StoryType storyType, Long artisianId);
+
+    List<Story> findByArtisianIdOrderByCreatedAtDesc(Long artisianId);
 }

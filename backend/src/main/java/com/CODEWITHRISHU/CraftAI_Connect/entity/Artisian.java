@@ -49,7 +49,7 @@ public class Artisian extends AuditEntity {
     @JsonIgnore
     private Address address;
 
-    @OneToMany(mappedBy = "artisan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "artisian", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products = new ArrayList<>();
 
     @OneToMany(mappedBy = "artisian", cascade = CascadeType.ALL, orphanRemoval = true)

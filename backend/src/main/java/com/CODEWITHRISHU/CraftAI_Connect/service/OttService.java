@@ -1,10 +1,10 @@
 package com.CODEWITHRISHU.CraftAI_Connect.service;
 
 import com.CODEWITHRISHU.CraftAI_Connect.dto.Response.JwtResponse;
+import com.CODEWITHRISHU.CraftAI_Connect.entity.Artisian;
 import com.CODEWITHRISHU.CraftAI_Connect.entity.OttToken;
-import com.CODEWITHRISHU.CraftAI_Connect.entity.User;
+import com.CODEWITHRISHU.CraftAI_Connect.repository.ArtisianRepository;
 import com.CODEWITHRISHU.CraftAI_Connect.repository.OttTokenRepository;
-import com.CODEWITHRISHU.CraftAI_Connect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,21 +26,21 @@ public class OttService {
 
     private final JavaMailSender javaMailSender;
     private final OttTokenRepository ottTokenRepository;
-    private final UserRepository userRepository;
+    private final ArtisianRepository artisianRepository;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
 
     @Value("${app.base-url}")
     private String appBaseUrl;
-    @Value("${mail.from}")
+    @Value("${spring.mail.from}")
     private String mailFrom;
     @Value("${ott.token.expiry.seconds}")
     private long tokenExpirySeconds;
 
     @Transactional(rollbackFor = SQLException.class)
     public void generateMagicLink(String username) {
-        log.info("Generating magic link for user: {}", username);
-        User user = userRepository.findByUsername(username)
+        log.info("Generating magic link for artisian: {}", username);
+        Artisian artisian = artisianRepository.findByName(username)
                 .orElseThrow(() -> {
                     log.warn("User not found: {}", username);
                     return new IllegalArgumentException("User not found: " + username);
@@ -48,43 +48,43 @@ public class OttService {
 
         String tokenValue = UUID.randomUUID().toString();
 
-        ottTokenRepository.deleteByUser(user);
-        log.debug("Deleted old OTT token for user: {}", user.getName());
+        ottTokenRepository.deleteByArtisian(artisian);
+        log.debug("Deleted old OTT token for artisian: {}", artisian.getName());
 
         OttToken ottToken = OttToken.builder()
                 .token(tokenValue)
                 .expiryDate(Instant.now().plusSeconds(tokenExpirySeconds))
-                .user(user)
+                .artisian(artisian)
                 .build();
 
         ottTokenRepository.save(ottToken);
-        log.info("Created new OTT token for user: {}", user.getName());
+        log.info("Created new OTT token for artisian: {}", artisian.getName());
 
         String magicLink = UriComponentsBuilder.fromHttpUrl(appBaseUrl)
                 .path("/api/v1/ott/login")
                 .queryParam("token", tokenValue)
                 .toUriString();
 
-        log.info("Generated magic link for user {}: {}", user.getName(), magicLink);
+        log.info("Generated magic link for artisian {}: {}", artisian.getName(), magicLink);
 
-        sendOttNotification(user, magicLink);
+        sendOttNotification(artisian, magicLink);
     }
 
-    private void sendOttNotification(User user, String magicLink) {
+    private void sendOttNotification(Artisian artisian, String magicLink) {
         try {
-            SimpleMailMessage message = getSimpleMailMessage(user, magicLink);
+            SimpleMailMessage message = getSimpleMailMessage(artisian, magicLink);
             javaMailSender.send(message);
-            log.info("Magic link email sent successfully to {}", user.getEmail());
+            log.info("Magic link email sent successfully to {}", artisian.getEmail());
         } catch (MailException e) {
-            log.error("Failed to send magic link email to {}: {}", user.getEmail(), e.getMessage(), e);
+            log.error("Failed to send magic link email to {}: {}", artisian.getEmail(), e.getMessage(), e);
             throw new RuntimeException("Failed to send notification email.", e);
         }
     }
 
-    private SimpleMailMessage getSimpleMailMessage(User user, String magicLink) {
+    private SimpleMailMessage getSimpleMailMessage(Artisian artisian, String magicLink) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(mailFrom);
-        message.setTo(user.getEmail());
+        message.setTo(artisian.getEmail());
         message.setSubject("Your SnapBuy Sign-In Link");
 
         String messageBody = String.format("""
@@ -95,7 +95,7 @@ public class OttService {
                  %s
                 
                  This link is valid for %d minutes. If you did not request this, please ignore this email.
-                """, user.getName(), magicLink, tokenExpirySeconds / 60);
+                """, artisian.getName(), magicLink, tokenExpirySeconds / 60);
 
         message.setText(messageBody);
         return message;
@@ -115,7 +115,7 @@ public class OttService {
             throw new IllegalArgumentException("Token expired, please request a new one.");
         }
 
-        String userName = ottToken.getUser().getName();
+        String userName = ottToken.getArtisian().getName();
         String jwt = jwtService.generateToken(userName);
         log.debug("Generated JWT for user: {}", userName);
         log.info("Generated JWT for user: {}", userName);

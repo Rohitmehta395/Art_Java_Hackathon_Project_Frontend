@@ -49,9 +49,9 @@ public class AuthController {
     public JwtResponse getRefreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         return refreshTokenService.findByToken(refreshTokenRequest.token())
                 .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUserInfo)
-                .map(userInfo -> {
-                    String accessToken = jwtService.generateToken(userInfo.getUsername());
+                .map(RefreshToken::getArtisianInfo)
+                .map(artisianInfo -> {
+                    String accessToken = jwtService.generateToken(artisianInfo.getName());
                     return JwtResponse.builder()
                             .accessToken(accessToken)
                             .refreshToken(refreshTokenRequest.token())

@@ -1,6 +1,6 @@
 package com.CODEWITHRISHU.CraftAI_Connect.service;
 
-import com.CODEWITHRISHU.CraftAI_Connect.Utils.ObjectMapper;
+import com.CODEWITHRISHU.CraftAI_Connect.utils.ObjectMapper;
 import com.CODEWITHRISHU.CraftAI_Connect.dto.Request.GenerateStoryRequest;
 import com.CODEWITHRISHU.CraftAI_Connect.dto.Response.StoryResponse;
 import com.CODEWITHRISHU.CraftAI_Connect.dto.StoryType;
@@ -41,7 +41,7 @@ public class StoryService {
         }
 
         String storyContent = aiContentService.generateCraftStory(artisan, product, request.storyType(), request.additionalContext());
-        String title = generateTitleFromType(request.storyType(), artisan, product);
+        String title = generateTitleFromType(request.storyType(), artisan);
 
         Story story = new Story();
         story.setTittle(title);
@@ -57,15 +57,15 @@ public class StoryService {
     }
 
     public List<StoryResponse> getStoriesByArtisan(Long artisanId) {
-        List<Story> stories = storyRepository.findByArtisanIdOrderByCreatedAtDesc(artisanId);
+        List<Story> stories = storyRepository.findByArtisianIdOrderByCreatedAtDesc(artisanId);
         return stories.stream().map(objectMapper::storyMapper).collect(Collectors.toList());
     }
 
-    private String generateTitleFromType(StoryType type, Artisian artisian, Product product) {
+    private String generateTitleFromType(StoryType type, Artisian artisian) {
         return switch (type) {
-            case CRAFT_ORIGIN -> String.format("The Origins of %s: A Traditional Craft", artisian.getSpecialization());
-            case TECHNIQUE -> String.format("Mastering the Art: %s Techniques", artisian.getSpecialization());
-            case CULTURAL_HERITAGE -> String.format("Cultural Heritage: The Story of %s Crafts", artisian.getLocation());
+            case CRAFT_ORIGIN -> String.format("The Origins of %s: A Traditional Craft", artisian.getCraftSpecialty());
+            case TECHNIQUE -> String.format("Mastering the Art: %s Techniques", artisian.getCraftSpecialty());
+            case CULTURAL_HERITAGE -> String.format("Cultural Heritage: The Story of %s Crafts", artisian.getAddress().getCity());
             case PERSONAL_JOURNEY -> String.format("The Journey of %s: A Master Artisan", artisian.getName());
         };
     }

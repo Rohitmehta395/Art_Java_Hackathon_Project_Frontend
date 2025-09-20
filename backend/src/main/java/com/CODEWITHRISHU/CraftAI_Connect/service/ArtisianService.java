@@ -1,6 +1,6 @@
 package com.CODEWITHRISHU.CraftAI_Connect.service;
 
-import com.CODEWITHRISHU.CraftAI_Connect.Utils.ObjectMapper;
+import com.CODEWITHRISHU.CraftAI_Connect.utils.ObjectMapper;
 import com.CODEWITHRISHU.CraftAI_Connect.dto.ArtisianStatus;
 import com.CODEWITHRISHU.CraftAI_Connect.dto.Request.CreateArtisianRequest;
 import com.CODEWITHRISHU.CraftAI_Connect.dto.Response.ArtisianResponse;
@@ -54,8 +54,8 @@ public class ArtisianService {
         return objectMapper.artisianMapper(saved);
     }
 
-    public Page<ArtisianResponse> searchArtisans(String query, String location, String specialization, Pageable pageable) {
-        Page<Artisian> artisans = artisianRepository.findBySearchCriteria(query, location, specialization, pageable);
+    public Page<ArtisianResponse> searchArtisans(String query, String location, String craftSpeciality, Pageable pageable) {
+        Page<Artisian> artisans = artisianRepository.findBySearchCriteria(query, location, craftSpeciality, pageable);
         return artisans.map(objectMapper::artisianMapper);
     }
 

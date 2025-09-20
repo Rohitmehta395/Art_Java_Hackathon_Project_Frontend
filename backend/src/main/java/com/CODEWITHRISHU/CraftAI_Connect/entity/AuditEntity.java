@@ -35,13 +35,13 @@ public abstract class AuditEntity {
     @JoinColumn(name = "created_by", updatable = false)
     @JsonIgnore
     @ToString.Exclude
-    private User createdBy;
+    private Artisian createdBy;
 
     @LastModifiedBy
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "updated_by")
     @JsonIgnore
     @ToString.Exclude
-    private User updatedBy;
+    private Artisian updatedBy;
 
 }

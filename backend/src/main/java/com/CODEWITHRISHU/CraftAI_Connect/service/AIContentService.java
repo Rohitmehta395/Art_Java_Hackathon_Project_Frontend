@@ -3,7 +3,6 @@ package com.CODEWITHRISHU.CraftAI_Connect.service;
 import com.CODEWITHRISHU.CraftAI_Connect.dto.StoryType;
 import com.CODEWITHRISHU.CraftAI_Connect.entity.Artisian;
 import com.CODEWITHRISHU.CraftAI_Connect.entity.Product;
-import com.CODEWITHRISHU.CraftAI_Connect.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.stereotype.Service;
@@ -12,10 +11,8 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class AIContentService {
     private final ChatClient chatClient;
-    private final User user;
 
-    public AIContentService(ChatClient.Builder chatClientBuilder, User user) {
-        this.user = user;
+    public AIContentService(ChatClient.Builder chatClientBuilder) {
         this.chatClient = chatClientBuilder.build();
     }
 
@@ -56,7 +53,7 @@ public class AIContentService {
                 product.getDescription(),
                 product.getMaterials(),
                 product.getCategory(),
-                user.getAddress().getStreet()
+                "India"
         );
 
         try {
@@ -88,7 +85,7 @@ public class AIContentService {
                         - Is professional yet personal
                         """,
                 artisian.getName(),
-                user.getAddress().getCountry(),
+                artisian.getAddress().getCountry(),
                 artisian.getYearsOfExperience(),
                 artisian.getBio()
         );
@@ -106,7 +103,7 @@ public class AIContentService {
         }
     }
 
-    private String buildStoryPrompt(Artisian artisan, Product product, StoryType storyType, String additionalContext) {
+    private String buildStoryPrompt(Artisian artisian, Product product, StoryType storyType, String additionalContext) {
         String basePrompt = String.format("""
                         Write a compelling story about an Indian artisan and their craft:
                         
@@ -119,9 +116,9 @@ public class AIContentService {
                         Additional Context: %s
                         
                         """,
-                artisan.getName(),
-                user.getAddress().getCountry(),
-                artisan.getYearsOfExperience(),
+                artisian.getName(),
+                artisian.getAddress().getCountry(),
+                artisian.getYearsOfExperience(),
                 product.getName(),
                 storyType,
                 additionalContext != null ? additionalContext : "None"
@@ -159,7 +156,7 @@ public class AIContentService {
             case TECHNIQUE ->
                     String.format("%s employs time-honored techniques that require years to master, combining skill, patience, and artistic vision.", artisian.getName());
             case CULTURAL_HERITAGE ->
-                    String.format("The craft represents the rich cultural heritage of %s, embodying traditions that connect communities to their roots.", user.getAddress().getStreet());
+                    String.format("The craft represents the rich cultural heritage of %s, embodying traditions that connect communities to their roots.", artisian.getAddress().getStreet());
             case PERSONAL_JOURNEY ->
                     String.format("%s has dedicated %d years to perfecting their craft, driven by passion and commitment to preserving traditional arts.",
                             artisian.getName(), artisian.getYearsOfExperience());

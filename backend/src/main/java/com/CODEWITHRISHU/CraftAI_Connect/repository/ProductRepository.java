@@ -10,11 +10,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
-    Page<Product> findByArtisanIdAndStatus(Long artisanId, ProductStatus status, Pageable pageable);
+    Page<Product> findByArtisianIdAndStatus(Long artisanId, ProductStatus status, Pageable pageable);
 
     @Query("""
             SELECT p FROM Product p 
@@ -31,5 +30,4 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             Pageable pageable
     );
 
-    List<Product> findByArtisianId(Long artisianId);
 }

@@ -1,9 +1,9 @@
 package com.CODEWITHRISHU.CraftAI_Connect.service;
 
+import com.CODEWITHRISHU.CraftAI_Connect.entity.Artisian;
 import com.CODEWITHRISHU.CraftAI_Connect.entity.RefreshToken;
-import com.CODEWITHRISHU.CraftAI_Connect.entity.User;
+import com.CODEWITHRISHU.CraftAI_Connect.repository.ArtisianRepository;
 import com.CODEWITHRISHU.CraftAI_Connect.repository.RefreshTokenRepository;
-import com.CODEWITHRISHU.CraftAI_Connect.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,30 +19,30 @@ import java.util.UUID;
 public class RefreshTokenService {
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserRepository userRepository;
+    private final ArtisianRepository artisianRepository;
 
     public RefreshToken createRefreshToken(String username) {
-        log.info("Creating refresh token for user: {}", username);
-        User user = userRepository.findByUsername(username)
+        log.info("Creating refresh token for artisian: {}", username);
+        Artisian artisian = artisianRepository.findByName(username)
                 .orElseThrow(() -> {
                     log.warn("User not found: {}", username);
                     return new UsernameNotFoundException("User not found");
                 });
 
-        log.debug("Deleting old refresh token for user: {}", username);
-        refreshTokenRepository.findByUserInfo(user).ifPresent(existingToken -> {
-            log.debug("Old refresh token exists, deleting it for user: {}", username);
+        log.debug("Deleting old refresh token for artisian: {}", username);
+        refreshTokenRepository.findByArtisianInfo(artisian).ifPresent(existingToken -> {
+            log.debug("Old refresh token exists, deleting it for artisian: {}", username);
             refreshTokenRepository.delete(existingToken);
         });
 
         RefreshToken refreshToken = RefreshToken.builder()
-                .userInfo(user)
+                .artisianInfo(artisian)
                 .token(UUID.randomUUID().toString())
                 .expiryDate(Instant.now().plusMillis(60000 * 60 * 24 * 15)) // 15 days expiry
                 .build();
 
         RefreshToken savedToken = refreshTokenRepository.save(refreshToken);
-        log.info("Refresh token created for user: {}, token: {}", username, savedToken.getToken());
+        log.info("Refresh token created for artisian: {}, token: {}", username, savedToken.getToken());
         return savedToken;
     }
 

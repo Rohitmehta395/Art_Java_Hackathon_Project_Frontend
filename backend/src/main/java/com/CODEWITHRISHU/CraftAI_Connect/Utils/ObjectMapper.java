@@ -1,4 +1,4 @@
-package com.CODEWITHRISHU.CraftAI_Connect.Utils;
+package com.CODEWITHRISHU.CraftAI_Connect.utils;
 
 import com.CODEWITHRISHU.CraftAI_Connect.dto.Response.ArtisianResponse;
 import com.CODEWITHRISHU.CraftAI_Connect.dto.Response.ProductResponse;

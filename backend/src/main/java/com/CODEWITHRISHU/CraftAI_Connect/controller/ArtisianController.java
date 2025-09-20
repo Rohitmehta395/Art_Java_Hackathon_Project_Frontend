@@ -39,10 +39,10 @@ public class ArtisianController {
     public ResponseEntity<Page<ArtisianResponse>> searchArtisans(
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String location,
-            @RequestParam(required = false) String specialization,
+            @RequestParam(required = false) String craftSpeciality,
             @PageableDefault(size = 20) Pageable pageable) {
 
-        Page<ArtisianResponse> artisans = artisianService.searchArtisans(query, location, specialization, pageable);
+        Page<ArtisianResponse> artisans = artisianService.searchArtisans(query, location, craftSpeciality, pageable);
         return ResponseEntity.ok(artisans);
     }
 

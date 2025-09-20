@@ -3,9 +3,8 @@ package com.CODEWITHRISHU.CraftAI_Connect.service;
 import com.CODEWITHRISHU.CraftAI_Connect.dto.Request.CreateArtisianRequest;
 import com.CODEWITHRISHU.CraftAI_Connect.entity.Address;
 import com.CODEWITHRISHU.CraftAI_Connect.entity.Artisian;
-import com.CODEWITHRISHU.CraftAI_Connect.entity.User;
 import com.CODEWITHRISHU.CraftAI_Connect.exception.UserAlreadyExists;
-import com.CODEWITHRISHU.CraftAI_Connect.repository.UserRepository;
+import com.CODEWITHRISHU.CraftAI_Connect.repository.ArtisianRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -31,7 +30,7 @@ public class JwtService {
     @Value("${jwt.secret}")
     private String secret;
 
-    private final UserRepository userRepository;
+    private final ArtisianRepository artisianRepository;
     private final PasswordEncoder passwordEncoder;
 
     public String extractUsername(String token) {
@@ -97,13 +96,13 @@ public class JwtService {
     }
 
     public void addUser(CreateArtisianRequest userInfo) {
-        log.info("Adding new user: {}", userInfo.name());
-        if (userRepository.findByEmail(userInfo.email()).isPresent()) {
+        log.info("Adding new artisian1: {}", userInfo.name());
+        if (artisianRepository.findByEmail(userInfo.email()).isPresent()) {
             throw new UserAlreadyExists("User already exists with name: " + userInfo.name());
         }
 
-        User user = userRepository.findByEmail(userInfo.name()).get();
-        user.setPassword(passwordEncoder.encode(userInfo.password()));
+        Artisian artisian1 = artisianRepository.findByEmail(userInfo.name()).get();
+        artisian1.setPassword(passwordEncoder.encode(userInfo.password()));
         Artisian artisian = Artisian.builder()
                 .name(userInfo.name())
                 .email(userInfo.email())
@@ -121,7 +120,7 @@ public class JwtService {
                 .bio(userInfo.bio())
                 .build();
 
-        userRepository.save(artisian);
+        artisianRepository.save(artisian);
         log.info("User '{}' added successfully", userInfo.name());
     }
 }
