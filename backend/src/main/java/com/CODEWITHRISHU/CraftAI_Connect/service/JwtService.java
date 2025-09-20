@@ -1,9 +1,5 @@
 package com.CODEWITHRISHU.CraftAI_Connect.service;
 
-import com.CODEWITHRISHU.CraftAI_Connect.dto.Request.CreateArtisianRequest;
-import com.CODEWITHRISHU.CraftAI_Connect.entity.Address;
-import com.CODEWITHRISHU.CraftAI_Connect.entity.Artisian;
-import com.CODEWITHRISHU.CraftAI_Connect.exception.UserAlreadyExists;
 import com.CODEWITHRISHU.CraftAI_Connect.repository.ArtisianRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -95,32 +91,4 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public void addUser(CreateArtisianRequest userInfo) {
-        log.info("Adding new artisian1: {}", userInfo.name());
-        if (artisianRepository.findByEmail(userInfo.email()).isPresent()) {
-            throw new UserAlreadyExists("User already exists with name: " + userInfo.name());
-        }
-
-        Artisian artisian1 = artisianRepository.findByEmail(userInfo.name()).get();
-        artisian1.setPassword(passwordEncoder.encode(userInfo.password()));
-        Artisian artisian = Artisian.builder()
-                .name(userInfo.name())
-                .email(userInfo.email())
-                .password(userInfo.password())
-                .address(Address.builder()
-                        .street(userInfo.address().getStreet())
-                        .city(userInfo.address().getCity())
-                        .state(userInfo.address().getState())
-                        .country(userInfo.address().getCountry())
-                        .pinCode(userInfo.address().getPinCode())
-                        .phoneNumber(userInfo.address().getPhoneNumber())
-                        .build())
-                .craftSpecialty(userInfo.craftSpecialty())
-                .yearsOfExperience(userInfo.yearsOfExperience())
-                .bio(userInfo.bio())
-                .build();
-
-        artisianRepository.save(artisian);
-        log.info("User '{}' added successfully", userInfo.name());
-    }
 }

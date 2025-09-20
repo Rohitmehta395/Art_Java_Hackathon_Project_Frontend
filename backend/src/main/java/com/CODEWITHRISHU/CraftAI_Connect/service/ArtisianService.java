@@ -26,7 +26,8 @@ public class ArtisianService {
     private final PasswordEncoder encoder;
 
     @Transactional
-    public ArtisianResponse createArtisan(CreateArtisianRequest request) {
+    public ArtisianResponse addArtisian(CreateArtisianRequest request) {
+        log.info("Adding new artisian1: {}", request.name());
         if (artisianRepository.findByEmail(request.email()).isPresent()) {
             throw new UserAlreadyExists("Artisan with email " + request.email() + " already exists" + " try with different email");
         }
@@ -66,17 +67,17 @@ public class ArtisianService {
     }
 
     @Transactional
-    public void enhanceArtisanProfile(Long artisanId) {
-        Artisian artisan = artisianRepository.findById(artisanId)
-                .orElseThrow(() -> new RuntimeException("Artisan not found"));
+    public void enhanceArtisanProfile(Long artisianId) {
+        Artisian artisian = artisianRepository.findById(artisianId)
+                .orElseThrow(() -> new RuntimeException("Artisan not found with ID: " + artisianId));
 
-        if (artisan.getBio() == null || artisan.getBio().length() < 100) {
-            String enhancedBio = aiContentService.generateArtisanBio(artisan);
-            artisan.setBio(enhancedBio);
-            log.info("Enhanced bio for artisan: {}", artisan.getName());
+        if (artisian.getBio() == null || artisian.getBio().length() < 100) {
+            String enhancedBio = aiContentService.generateArtisanBio(artisian);
+            artisian.setBio(enhancedBio);
+            log.info("Enhanced bio for artisian: {}", artisian.getName());
         }
 
-        artisan.getProducts().forEach(product -> {
+        artisian.getProducts().forEach(product -> {
             if (product.getAiGeneratedDescription() == null) {
                 String enhancedDescription = aiContentService.enhanceProductDescription(product);
                 product.setAiGeneratedDescription(enhancedDescription);
@@ -84,6 +85,6 @@ public class ArtisianService {
             }
         });
 
-        artisianRepository.save(artisan);
+        artisianRepository.save(artisian);
     }
 }

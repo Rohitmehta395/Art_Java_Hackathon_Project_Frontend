@@ -13,22 +13,22 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 @Builder
 public class Address {
-    @Column(name = "street", nullable = false)
+    @Column(nullable = false)
     private String street;
 
-    @Column(name = "city", nullable = false)
+    @Column(nullable = false)
     private String city;
 
-    @Column(name = "state", nullable = false)
+    @Column(nullable = false)
     private String state;
 
-    @Column(name = "pin_code", nullable = false)
+    @Column(nullable = false)
     private int pinCode;
 
-    @Column(name = "country", nullable = false)
+    @Column(nullable = false)
     private String country;
 
-    @Column(name = "phone_number", nullable = false)
+    @Column(nullable = false)
     @Size(min = 10, max = 15)
     private Integer phoneNumber;
 }

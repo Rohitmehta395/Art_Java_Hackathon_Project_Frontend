@@ -2,16 +2,11 @@ package com.CODEWITHRISHU.CraftAI_Connect.entity;
 
 import com.CODEWITHRISHU.CraftAI_Connect.dto.ProductStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "products")

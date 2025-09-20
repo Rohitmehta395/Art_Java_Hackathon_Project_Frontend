@@ -12,6 +12,6 @@ public record CreateArtisianRequest(
         @Min(value = 6, message = "Password must be atleast 6 digit or letter or some special char") String password,
         String craftSpecialty,
         Address address,
-        @NotBlank(message = "bio is required") String bio,
+        String bio,
         @Min(value = 0, message = "Years of experience must be non-negative") Integer yearsOfExperience
 ) {}
